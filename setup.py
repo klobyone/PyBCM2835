@@ -4,7 +4,7 @@ module1 = Extension('PyBCM2835',
 					include_dirs = ['/usr/local/include'],
 					libraries = ['bcm2835'],
 					library_dirs = ['/usr/local/lib'],
-                    sources = ['PyBCM2835.c'])
+                    sources = ['src/PyBCM2835.c'])
 
 setup (name = 'PyBCM2835',
        version = '0.1',
