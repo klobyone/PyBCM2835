@@ -1,0 +1,27 @@
+This extension provides functionality from libbcm2835 (Written by Mike McCauley)
+for the Raspberry Pi. 
+
+For more documentation visit: http://www.open.com.au/mikem/bcm2835/
+
+Open Source Licensing GPL V2
+
+This is the appropriate option if you want to share the source code of your
+application with everyone you distribute it to, and you also want to give them
+the right to share who uses it. If you wish to use this software under Open
+Source Licensing, you must contribute all your source code to the open source
+community in accordance with the GPL Version 2 when your application is
+distributed. See http://www.gnu.org/copyleft/gpl.html and COPYING.
+
+In order to use this extension you must build libbcm2835 as a shared object.
+
+Example:
+
+tar xvfz bcm2835-1.14.tar.gz
+cd bcm2835-1.14/src
+make libbcm2835.a
+gcc -shared bcm2835.o -o libbcm2835.so -lrt
+sudo cp libbcm2835.so /usr/local/lib/
+sudo cp bcm2835.h /usr/local/include/
+ 
+Make sure that the library path is can be found by the linker. Run 'ldconfig -v' 
+and if necessary, add the entry to /etc/ld.so.conf.d/libc.conf.  
