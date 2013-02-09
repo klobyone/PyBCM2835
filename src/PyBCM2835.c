@@ -507,9 +507,11 @@ PyBCM2835_spi_transfernb(PyObject *self, PyObject *args)
 {
 	char *tbuf;
 	char *rbuf;
+	int tbuf_len;
+	int rbuf_len;
 	uint32_t len;
 
-	if (!PyArg_ParseTuple(args,"ssi",&tbuf,&rbuf,&len)) {
+	if (!PyArg_ParseTuple(args,"s#s#i",&tbuf, &tbuf_len, &rbuf, &rbuf_len,&len)) {
 		return NULL;
 	}
 
@@ -522,9 +524,10 @@ static PyObject *
 PyBCM2835_spi_transfern(PyObject *self, PyObject *args)
 {
 	char *buf;
+	int buf_len;
 	uint32_t len;
 
-	if (!PyArg_ParseTuple(args,"si",&buf,&len)) {
+	if (!PyArg_ParseTuple(args,"s#i",&buf, &buf_len,&len)) {
 		return NULL;
 	}
 
