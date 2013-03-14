@@ -16,12 +16,12 @@ In order to use this extension you must build libbcm2835 as a shared object.
 
 Example:
 
-tar xvfz bcm2835-1.14.tar.gz
-cd bcm2835-1.14/src
+tar xvfz bcm2835-1.22.tar.gz
+cd bcm2835-1.22/src
 make libbcm2835.a
-gcc -shared bcm2835.o -o libbcm2835.so -lrt
+gcc -shared bcm2835.o -o libbcm2835.so
 sudo cp libbcm2835.so /usr/local/lib/
 sudo cp bcm2835.h /usr/local/include/
  
-Make sure that the library path is can be found by the linker. Run 'ldconfig -v' 
+Make sure that the library path is can be found by the linker. Run 'sudo ldconfig -v' 
 and if necessary, add the entry to /etc/ld.so.conf.d/libc.conf.  
