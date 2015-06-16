@@ -638,12 +638,12 @@ PyBCM2835_i2c_read_register_rs(PyObject *self, PyObject *args)
 static PyObject *
 PyBCM2835_i2c_write_read_rs(PyObject *self, PyObject *args)
 {
-	char *tbuf;
-	char *rbuf;
-	int tbuf_len;
-	int rbuf_len;
-	uint32_t len;
-
+	char *cmds;
+	char *buf;
+	int cmds_len;
+	int cmds_len2;
+	int buf_len;
+	
 	if (!PyArg_ParseTuple(args,"s#ls#",&cmds, &cmds_len, &cmds_len2, &buf, &buf_len)) {
 		return NULL;
 	}
