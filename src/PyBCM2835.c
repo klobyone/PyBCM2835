@@ -536,6 +536,122 @@ PyBCM2835_spi_transfern(PyObject *self, PyObject *args)
 	Py_RETURN_NONE;
 }
 
+static PyObject *
+PyBCM2835_i2c_begin(PyObject *self)
+{
+	bcm2835_i2c_begin();
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+PyBCM2835_i2c_end(PyObject *self)
+{
+	bcm2835_i2c_end();
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+PyBCM2835_i2c_setSlaveAddress(PyObject *self, PyObject *args)
+{
+	int addr;
+
+	if (!PyArg_ParseTuple(args,"i",&addr)) {
+		return NULL;
+	}
+
+	bcm2835_i2c_setSlaveAddress(addr);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+PyBCM2835_i2c_setClockDivider(PyObject *self, PyObject *args)
+{
+	int divider;
+
+	if (!PyArg_ParseTuple(args,"i",&divider)) {
+		return NULL;
+	}
+
+	bcm2835_i2c_setClockDivider(divider);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+PyBCM2835_i2c_set_baudrate(PyObject *self, PyObject *args)
+{
+	uint32_t baudrate;
+	if (!PyArg_ParseTuple(args,"i",&baudrate)) {
+		return NULL;
+	}
+
+	bcm2835_i2c_set_baudrate(baudrate);
+	Py_RETURN_NONE;
+}
+
+static PyObject *
+PyBCM2835_i2c_write(PyObject *self, PyObject *args)
+{
+	char *buf;
+	int buf_len;
+	uint32_t len;
+
+	if (!PyArg_ParseTuple(args,"s#i",&buf, &buf_len,&len)) {
+		return NULL;
+	}
+
+	uint8_t rtn = bcm2835_i2c_write(buf, len);
+	return Py_BuildValue("i",rtn);
+}
+
+static PyObject *
+PyBCM2835_i2c_read(PyObject *self, PyObject *args)
+{
+	char *buf;
+	int buf_len;
+	uint32_t len;
+
+	if (!PyArg_ParseTuple(args,"s#i",&buf, &buf_len,&len)) {
+		return NULL;
+	}
+
+	uint8_t rtn = bcm2835_i2c_read(buf, len);
+	return Py_BuildValue("i",rtn);
+}
+
+static PyObject *
+PyBCM2835_i2c_read_register_rs(PyObject *self, PyObject *args)
+{
+	char *tbuf;
+	char *rbuf;
+	int tbuf_len;
+	int rbuf_len;
+	uint32_t len;
+
+	if (!PyArg_ParseTuple(args,"s#s#i",&tbuf, &tbuf_len, &rbuf, &rbuf_len,&len)) {
+		return NULL;
+	}
+
+	uint8_t rtn = bcm2835_i2c_read_register_rs(tbuf, rbuf, len);
+	return Py_BuildValue("i",rtn);
+}
+
+static PyObject *
+PyBCM2835_i2c_write_read_rs(PyObject *self, PyObject *args)
+{
+	char *cmds;
+	char *buf;
+	int cmds_len;
+	int cmds_len2;
+	int buf_len;
+	
+	if (!PyArg_ParseTuple(args,"s#ls#",&cmds, &cmds_len, &cmds_len2, &buf, &buf_len)) {
+		return NULL;
+	}
+
+	uint8_t rtn = bcm2835_i2c_write_read_rs(cmds, cmds_len, buf, buf_len);
+	return Py_BuildValue("i",rtn);
+}
+
 static PyObject *PyBCM2835Error;
 
 static PyMethodDef PyBCM2835Methods[] = {
@@ -578,6 +694,15 @@ static PyMethodDef PyBCM2835Methods[] = {
     {"spi_transfer", (PyCFunction)PyBCM2835_spi_transfer, METH_VARARGS, "Transfers one byte to and from the currently selected SPI slave."},
     {"spi_transfernb", (PyCFunction)PyBCM2835_spi_transfernb, METH_VARARGS, "Transfers any number of bytes to and from the currently selected SPI slave."},
     {"spi_transfern", (PyCFunction)PyBCM2835_spi_transfern, METH_VARARGS, "Transfers any number of bytes to and from the currently selected SPI slave using bcm2835_spi_transfernb. "},
+    {"i2c_begin", (PyCFunction)PyBCM2835_i2c_begin, METH_NOARGS, "Start I2C operations."},
+    {"i2c_end", (PyCFunction)PyBCM2835_i2c_end, METH_NOARGS, "End I2C operations"},
+    {"i2c_setSlaveAddress", (PyCFunction)PyBCM2835_i2c_setSlaveAddress, METH_VARARGS, "Sets the I2C clock divider by converting the baudrate parameter to the equivalent I2C clock divider."},
+    {"i2c_setClockDivider", (PyCFunction)PyBCM2835_i2c_setClockDivider, METH_VARARGS, "Set the clock divider, 2500 = 10us = 100 kHz,622 = 2.504us = 399.3610 kHz,150 = 60ns = 1.666 MHz (default at reset),148 = 59ns = 1.689 MHz"},
+    {"i2c_setBaudrate", (PyCFunction)PyBCM2835_i2c_set_baudrate, METH_VARARGS, "Set the baudrate"},
+    {"i2c_write", (PyCFunction)PyBCM2835_i2c_write, METH_VARARGS, "Write any number of bytes to the devices"},
+    {"i2c_read", (PyCFunction)PyBCM2835_i2c_read, METH_VARARGS, "Read any number of bytes from the devices"},
+    {"i2c_read_register_rs", (PyCFunction)PyBCM2835_i2c_read_register_rs, METH_VARARGS, "Allows reading from I2C slaves that require a repeated start (without any prior stop) to read after the required slave register has been set. For example, the popular MPL3115A2 pressure and temperature sensor. Note that your device must support or require this mode. If your device does not require this mode then the standard combined"},
+    {"i2c_write_read_rs", (PyCFunction)PyBCM2835_i2c_write_read_rs, METH_VARARGS, "Allows sending an arbitrary number of bytes to I2C slaves before issuing a repeated start (with no prior stop) and reading a response. Necessary for devices that require such behavior, such as the MLX90620"},
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
